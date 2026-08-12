@@ -27,6 +27,10 @@ text = font.render('Start', True, (255,255,255))
 button_rect =  pygame.Rect(x,y,width_rect,height_rect)
 textrect = text.get_rect(center=button_rect.center)
 
+score = pygame.font.Font(None,25 )
+score_text = font.render('ewfw', True, (0,0,0))
+scorerect = score_text.get_rect(center=(500,100))
+
 vel = 0
 
 count = 0
@@ -49,13 +53,11 @@ while running:
 
 
     screen.fill((255,255,255))
-    pygame.display.set_caption(''+str(imp.get_rect()))#pygame.mouse.get_pos()
 
-    if w:
-        imp1 = rot_center(imp, count)
-        if vel > 0:
-            count += vel
-            vel -= 0.1
+
+
+
+
     if x <= mouse[0] <= x + width_rect and y <= mouse[1]<= y+height_rect:
         pygame.draw.rect(screen, (0, 255, 0), (x, y, width_rect, height_rect), 0, 3)
         pygame.draw.rect(screen, (255, 255, 0), (x, y, width_rect, height_rect), 3, 3)
@@ -64,10 +66,34 @@ while running:
 
     screen.blit(text, textrect)
 
+
     screen.blit(imp1, imp1.get_rect(center=screen.get_rect().center))
     pygame.draw.polygon(screen, (255, 0, 0),
-                        [[480, 130], [520, 130],
-                         [500, 170]])
+                        [[480, 150], [520, 150],
+                         [500, 185]])
+
+    if w:
+        imp1 = rot_center(imp, count)
+        if vel > 0:
+            count += vel
+            vel -= 0.1
+        elif vel <=0:
+            w = False
+    else:
+        pygame.display.set_caption('' + str(screen.get_at((500,190))))
+    color = screen.get_at((500,190))
+    if color[1] >= 100:
+        score_text = font.render('Green', True, (0, 255, 0))
+    elif color[0] >= 100:
+        score_text = font.render('Red', True, (255, 0, 0))
+    else:
+        score_text = font.render('Black', True, (0, 0, 0))
+
+
+    # score_text = font.render('', True, (0, 0, 0))
+    scorerect = score_text.get_rect(center=(500, 100))
+    screen.blit(score_text, scorerect)
+
     pygame.display.flip()
     clock.tick(60)
 
