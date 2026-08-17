@@ -21,6 +21,9 @@ y_start = 650
 x_start = 425
 width_rect = 150
 height_rect = 50
+width_pm = 70
+height_pm = 40
+
 
 x_green = 800
 y_green = 300
@@ -28,6 +31,13 @@ x_red=800
 y_red=375
 x_black=800
 y_black=450
+x_minus = 800
+y_minus = 520
+x_plus = 880
+y_plus = 520
+
+
+
 
 font = pygame.font.Font(None,25 )
 text = font.render('START', True, (255,255,255))
@@ -57,6 +67,21 @@ res = pygame.font.Font(None,25 )
 res_text = res.render('', True, (0, 255, 0))
 res_text_rect = res_text.get_rect(center=(500, 50))
 
+balance = 1000
+bet_amount = 50
+step = 50
+
+text_minus = font.render('-',True,(0,0,0))
+button_minus_rect =  pygame.Rect(x_minus,y_minus,width_pm,height_pm)
+text_minus_rect = text_minus.get_rect(center=button_minus_rect.center)
+
+
+text_plus = font.render('+',True,(0,0,0))
+button_plus_rect =  pygame.Rect(x_plus,y_plus,width_pm,height_pm)
+text_plus_rect = text_plus.get_rect(center=button_plus_rect.center)
+
+
+
 vel = 0
 
 count = 0
@@ -66,7 +91,7 @@ game_over = False
 imp1 = rot_center(imp,0)
 bet = {"Green": False,"Red": False, "Black":False}
 color_tuple = {"Green": (0,255,0),"Red": (255,0,0), "Black":(0,0,0)}
-
+betx = {"Green": 14,"Red": 2, "Black": 2}
 
 while running:
     mouse = pygame.mouse.get_pos()
@@ -79,10 +104,12 @@ while running:
                 game_over = False
                 vel = random.randint(15,25)
         if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
-            if x_start <= mouse[0] <= x_start + width_rect and y_start <= mouse[1]<= y_start+height_rect:
-                w = True
-                game_over = False
-                vel = random.randint(15,25)
+            if x_start <= mouse[0] <= x_start + width_rect and y_start <= mouse[1]<= y_start+height_rect and not w:
+                if balance >= bet_amount:
+                    balance -= bet_amount
+                    w = True
+                    game_over = False
+                    vel = random.randint(15,25)
             if not w:
                 if x_green <= mouse[0] <= x_green + width_rect and y_green <= mouse[1] <= y_green+ height_rect :
                      bet = {"Green": True,"Red": False,"Black": False}
@@ -90,6 +117,13 @@ while running:
                     bet = {"Green": False, "Red": True, "Black": False}
                 if x_black <= mouse[0] <= x_black + width_rect and y_black<= mouse[1] <= y_black+ height_rect:
                     bet = {"Green": False, "Red": False, "Black": True}
+
+                if x_plus <= mouse[0] <= x_plus + width_pm and y_plus <= mouse[1] <= y_plus + height_pm:
+                    if bet_amount + step <= balance:
+                        bet_amount += step
+                if x_minus <= mouse[0] <= x_minus + width_pm and y_minus <= mouse[1] <= y_minus + height_pm:
+                    if bet_amount - step >= step:
+                        bet_amount -= step
 
     screen.fill((255,255,255))
 
@@ -154,11 +188,25 @@ while running:
             score_text = font.render(spin_result,True, color_tuple[spin_result])
 
             if bet[spin_result]:
-                res_text = res.render('You won!',True,color_tuple[spin_result])
+                payout = bet_amount * betx[spin_result]
+                balance += payout
+                res_text = res.render(f'You won! +{payout}',True,color_tuple[spin_result])
             else:
-                res_text = res.render('You lost!',True,(0,0,255))
+
+                res_text = res.render(f'You lost! -{bet_amount}',True,(0,0,255))
 
             bet = {"Green": False,"Red":False, "Black":False}
+
+    pygame.draw.rect(screen,(70,70,70),button_minus_rect,0,3)
+    pygame.draw.rect(screen,(70,70,70),button_plus_rect,0,3)
+    screen.blit(text_minus, text_minus_rect)
+    screen.blit(text_plus,text_plus_rect)
+    font_bet = pygame.font.Font(None, 35)
+    bet_text = font.render(f"Bet:        {bet_amount}",True,(0,0,0))
+    balance_text = font_bet.render(f"Balance: {balance}",True,(0,0,0))
+    screen.blit(bet_text,(800,580))
+    screen.blit(balance_text,(800,100))
+
     if game_over:
         res_text_rect = res_text.get_rect(center=(500, 50))
         screen.blit(res_text,res_text_rect)
