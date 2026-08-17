@@ -17,54 +17,114 @@ screen = pygame.display.set_mode((screen_w, screen_h))
 clock = pygame.time.Clock()
 position = [0,0]
 imp = pygame.image.load("images/images.png")
-y = 650
-x = 425
+y_start = 650
+x_start = 425
 width_rect = 150
 height_rect = 50
 
+x_green = 800
+y_green = 300
+x_red=800
+y_red=375
+x_black=800
+y_black=450
+
 font = pygame.font.Font(None,25 )
-text = font.render('Start', True, (255,255,255))
-button_rect =  pygame.Rect(x,y,width_rect,height_rect)
+text = font.render('START', True, (255,255,255))
+button_rect =  pygame.Rect(x_start,y_start,width_rect,height_rect)
 textrect = text.get_rect(center=button_rect.center)
+
+font_g = pygame.font.Font(None,25)
+text_green = font_g.render('BET GREEN',True,(255,255,255))
+button_green_rect =  pygame.Rect(x_green,y_green,width_rect,height_rect)
+text_green_rect = text_green.get_rect(center=button_green_rect.center)
+
+font_r = pygame.font.Font(None,25)
+text_red = font_r.render('BET RED',True,(255,255,255))
+button_red_rect =  pygame.Rect(x_red,y_red,width_rect,height_rect)
+text_red_rect = text_red.get_rect(center=button_red_rect.center)
+
+font_b = pygame.font.Font(None,25)
+text_black = font_b.render('BET BLACK',True,(255,255,255))
+button_black_rect =  pygame.Rect(x_black,y_black,width_rect,height_rect)
+text_black_rect = text_black.get_rect(center=button_black_rect.center)
 
 score = pygame.font.Font(None,25 )
 score_text = font.render('ewfw', True, (0,0,0))
 scorerect = score_text.get_rect(center=(500,100))
+
+res = pygame.font.Font(None,25 )
+res_text = res.render('', True, (0, 255, 0))
+res_text_rect = res_text.get_rect(center=(500, 50))
 
 vel = 0
 
 count = 0
 running = True
 w = False
+game_over = False
 imp1 = rot_center(imp,0)
+bet = {"Green": False,"Red": False, "Black":False}
+color_tuple = {"Green": (0,255,0),"Red": (255,0,0), "Black":(0,0,0)}
+
+
 while running:
     mouse = pygame.mouse.get_pos()
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
         if event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_SPACE:
-                w = not w
+            if event.key == pygame.K_SPACE and not w:
+                w = True
+                game_over = False
                 vel = random.randint(15,25)
         if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
-            if x <= mouse[0] <= x + width_rect and y <= mouse[1]<= y+height_rect:
+            if x_start <= mouse[0] <= x_start + width_rect and y_start <= mouse[1]<= y_start+height_rect:
                 w = True
+                game_over = False
                 vel = random.randint(15,25)
-
+            if not w:
+                if x_green <= mouse[0] <= x_green + width_rect and y_green <= mouse[1] <= y_green+ height_rect :
+                     bet = {"Green": True,"Red": False,"Black": False}
+                if x_red<= mouse[0] <= x_red + width_rect and y_red <= mouse[1] <= y_red+ height_rect :
+                    bet = {"Green": False, "Red": True, "Black": False}
+                if x_black <= mouse[0] <= x_black + width_rect and y_black<= mouse[1] <= y_black+ height_rect:
+                    bet = {"Green": False, "Red": False, "Black": True}
 
     screen.fill((255,255,255))
 
 
-
-
-
-    if x <= mouse[0] <= x + width_rect and y <= mouse[1]<= y+height_rect:
-        pygame.draw.rect(screen, (0, 255, 0), (x, y, width_rect, height_rect), 0, 3)
-        pygame.draw.rect(screen, (255, 255, 0), (x, y, width_rect, height_rect), 3, 3)
+    if x_start <= mouse[0] <= x_start + width_rect and y_start <= mouse[1]<= y_start+height_rect:
+        pygame.draw.rect(screen, (0, 255, 0), (x_start, y_start, width_rect, height_rect), 0, 3)
+        pygame.draw.rect(screen, (255, 255, 0), (x_start, y_start, width_rect, height_rect), 3, 3)
     else:
-        pygame.draw.rect(screen, (0, 255, 0), (x, y, width_rect, height_rect), 0, 3)
+        pygame.draw.rect(screen, (0, 255, 0), (x_start, y_start, width_rect, height_rect), 0, 3)
 
     screen.blit(text, textrect)
+
+    if x_green <= mouse[0] <= x_green + width_rect and y_green <= mouse[1]<= y_green+height_rect:
+        pygame.draw.rect(screen, (0, 120, 0), (x_green, y_green, width_rect, height_rect), 0, 3)
+        pygame.draw.rect(screen, (255, 255, 0), (x_green, y_green, width_rect, height_rect), 3, 3)
+    else:
+        pygame.draw.rect(screen, (0, 120, 0), (x_green, y_green, width_rect, height_rect), 0, 3)
+
+    screen.blit(text_green, text_green_rect)
+
+    if x_red <= mouse[0] <= x_red + width_rect and y_red <= mouse[1]<= y_red+height_rect:
+        pygame.draw.rect(screen, (255, 0, 0), (x_red, y_red, width_rect, height_rect), 0, 3)
+        pygame.draw.rect(screen, (255, 255, 0), (x_red, y_red, width_rect, height_rect), 3, 3)
+    else:
+        pygame.draw.rect(screen, (255, 0, 0), (x_red, y_red, width_rect, height_rect), 0, 3)
+
+    screen.blit(text_red, text_red_rect)
+
+    if x_black <= mouse[0] <= x_black + width_rect and y_black <= mouse[1]<= y_black+height_rect:
+        pygame.draw.rect(screen, (0, 0, 0), (x_black, y_black, width_rect, height_rect), 0, 3)
+        pygame.draw.rect(screen, (255, 255, 0), (x_black, y_black, width_rect, height_rect), 3, 3)
+    else:
+        pygame.draw.rect(screen, (0, 0, 0), (x_black, y_black, width_rect, height_rect), 0, 3)
+
+    screen.blit(text_black, text_black_rect)
 
 
     screen.blit(imp1, imp1.get_rect(center=screen.get_rect().center))
@@ -72,27 +132,37 @@ while running:
                         [[480, 150], [520, 150],
                          [500, 185]])
 
+    color = screen.get_at((500, 190))
+
     if w:
+        count += vel
+        vel -= 0.1
         imp1 = rot_center(imp, count)
-        if vel > 0:
-            count += vel
-            vel -= 0.1
-        elif vel <=0:
+
+        if vel <=0:
+            vel = 0
             w = False
-    else:
-        pygame.display.set_caption('' + str(screen.get_at((500,190))))
-    color = screen.get_at((500,190))
-    if color[1] >= 100:
-        score_text = font.render('Green', True, (0, 255, 0))
-    elif color[0] >= 100:
-        score_text = font.render('Red', True, (255, 0, 0))
-    else:
-        score_text = font.render('Black', True, (0, 0, 0))
+            game_over = True
+            spin_result = None
+            if color[1] >= 100:
+                spin_result = "Green"
+            elif color[0] >= 100:
+                spin_result ="Red"
+            else:
+                spin_result = "Black"
 
+            score_text = font.render(spin_result,True, color_tuple[spin_result])
 
-    # score_text = font.render('', True, (0, 0, 0))
-    scorerect = score_text.get_rect(center=(500, 100))
-    screen.blit(score_text, scorerect)
+            if bet[spin_result]:
+                res_text = res.render('You won!',True,color_tuple[spin_result])
+            else:
+                res_text = res.render('You lost!',True,(0,0,255))
+
+    if game_over:
+        res_text_rect = res_text.get_rect(center=(500, 50))
+        screen.blit(res_text,res_text_rect)
+        scorerect = score_text.get_rect(center=(500, 100))
+        screen.blit(score_text, scorerect)
 
     pygame.display.flip()
     clock.tick(60)
