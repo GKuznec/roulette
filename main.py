@@ -157,7 +157,6 @@ while running:
                 res_text = res.render('You won!',True,color_tuple[spin_result])
             else:
                 res_text = res.render('You lost!',True,(0,0,255))
-
     if game_over:
         res_text_rect = res_text.get_rect(center=(500, 50))
         screen.blit(res_text,res_text_rect)
